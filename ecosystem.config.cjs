@@ -1,16 +1,9 @@
 module.exports = {
-  app: [
+  apps: [
     {
-      name: "digital-platform",
-      script: "ts-node",
-      args: "./src/server.ts",
-      instances: 1,
-      autorestart: true,
-      watch: ["src"],
-      ignore_watch: ["node_modules", "logs", ".git", "public"],
-      watch_options: {
-        followSymlinks: false,
-      },
+      name: "ips-node-ts-boiler-plate",
+      script: "./dist/server.js", // Use the built file
+      watch: false, // Watching should be disabled for built files in production
       env: {
         NODE_ENV: "development",
         PORT: 5020,
@@ -37,11 +30,13 @@ module.exports = {
         FRONTEND_URL: "http://production-frontend.com",
         LOG_LEVEL: "error",
       },
-      error_file: "logs/err.log",
-      out_file: "logs/out.log",
-      log_date_format: "YYYY-MM-DD HH:mm:ss",
-      merge_logs: true,
-      max_memory_restart: "1G",
+      error_file: "./logs/err.log", // Path for error logs
+      out_file: "./logs/out.log", // Path for output logs
+      log_date_format: "YYYY-MM-DD HH:mm:ss", // Format for log timestamps
+      merge_logs: true, // Combine logs from multiple instances
+      max_memory_restart: "1G", // Restart if memory exceeds 1GB
+      instances: 1, // Number of instances (use 0 for all available CPUs)
+      exec_mode: "fork", // Use fork mode (change to "cluster" for multiple instances)
     },
   ],
 };

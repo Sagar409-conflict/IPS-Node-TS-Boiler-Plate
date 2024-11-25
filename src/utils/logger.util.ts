@@ -27,7 +27,7 @@ const loggerOptions: LoggerOptions = {
   levels: logLevels.levels,
   transports: [
     new winston.transports.Console({
-      level: "debug", // Default log level
+      level: "debug",
       format: logFormat,
     }),
   ],

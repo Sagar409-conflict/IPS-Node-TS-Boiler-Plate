@@ -2,10 +2,8 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 import fileUpload from "express-fileupload";
-// import { logUrl } from "./url-logger.middleware";
-// import route from "../routes";
-// import { CONFIG } from "./config/config";
-// import connectDB from "./models";
+import route from "./routes/index.routes";
+import sequelize from "./config/database";
 
 const app: Application = express();
 
@@ -25,40 +23,42 @@ app.use(
   })
 );
 
-// File upload and static file serving
 app.use(fileUpload({ parseNested: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Parsing requests
 app.use(express.urlencoded({ limit: "500mb", extended: false }));
 app.use(express.json({ limit: "500mb" }));
 
-// Custom middlewares
-// app.use(logUrl);
+app.use("/api", route);
 
-// Route initialization
-// app.use("/api", route);
-
-// Health check route
 app.get("/ping", (req: Request, res: Response) => {
   res.status(200).json({ message: "Server is working properly!" });
 });
 
-// const PORT = CONFIG.PORT;
+const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    // await sequelize.sync({ force: false })
+    await sequelize.sync({ alter: true, force: false });
+    console.log("Connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+    throw error;
+  }
+};
+connectDB().then(() => {
+  bootstrap();
+});
 
-// connectDB().then(() => {
-//   bootstrap();
-// });
+const PORT = process.env.PORT || 3000;
 
 const bootstrap = async () => {
-  //   try {
-  //     app.listen(PORT, () => {
-  //       console.log(`Server is running on port ${PORT}`);
-  //     });
-  //   } catch (error) {
-  //     console.error("App bootstrap error: ", error);
-  //     process.exit(1);
-  //   }
+  try {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("App bootstrap error: ", error);
+    process.exit(1);
+  }
 };
-
-export default app; // Ensure the app is exported
